@@ -11,6 +11,10 @@ export class TasksService {
         return this.tasks; // since getAllTasks is with in the class it has access to tasks array even though it is defined as private
     }
 
+    getTaskById(id: string): Task {
+        return this.tasks.find(task => task.id === id);
+    }
+
     createTask(createTaskDto: CreateTaskDto): Task {
         const { title, description } = createTaskDto; // we need to deconstruct the DTO to use inside the service
         const task: Task = {
@@ -21,5 +25,9 @@ export class TasksService {
         }
         this.tasks.push(task);
         return task; // by returning a newly created object front end don't need make an extra call to know which object is created
+    }
+
+    deleteTaskById(id: string): void {
+        this.tasks = this.tasks.filter(task => task.id !== id);
     }
 }
