@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Task, TaskStatus } from './task.model';
 import * as uuid from 'uuid/v1';
+import { CreateTaskDto } from './dto/create-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -10,7 +11,8 @@ export class TasksService {
         return this.tasks; // since getAllTasks is with in the class it has access to tasks array even though it is defined as private
     }
 
-    createTask(title: string, description: string): Task {
+    createTask(createTaskDto: CreateTaskDto): Task {
+        const { title, description } = createTaskDto; // we need to deconstruct the DTO to use inside the service
         const task: Task = {
             id: uuid(),
             title: title,
