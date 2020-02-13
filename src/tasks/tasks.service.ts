@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Task, TaskStatus } from './task.model';
 import * as uuid from 'uuid/v1';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { TasksFilterDto } from './dto/get-tasks-filter.dto';
 
 @Injectable()
 export class TasksService {
@@ -11,6 +12,20 @@ export class TasksService {
         return this.tasks; // since getAllTasks is with in the class it has access to tasks array even though it is defined as private
     }
 
+    getTasksByFilter(filterDto: TasksFilterDto): Task[] {
+        const { status, search } = filterDto;
+        let tasks = this.getAllTasks();
+        if (status) {
+            console.log(status, ':', tasks.filter(task => task.status === status));
+            tasks = tasks.filter(task => task.status === status)
+        }
+        if (search) {
+            console.log(search);
+            tasks = tasks.filter(task => task.title.includes(search) || task.description.includes(search),
+            );
+        }
+        return tasks;
+    }
     getTaskById(id: string): Task {
         return this.tasks.find(task => task.id === id);
     }
