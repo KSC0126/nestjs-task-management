@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe, NotFoundException } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { Task, TaskStatus } from './task.model';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -11,17 +11,20 @@ export class TasksController {
     @Get() // letting nest js know it is a get class or using @Get decorator to make get call
     getTasks(@Query() filterDto: TasksFilterDto): Task[] {
         if (Object.keys(filterDto).length) {
-            console.log('inside status')
             return this.tasksService.getTasksByFilter(filterDto);
         } else {
-            console.log('inside else')
             return this.tasksService.getAllTasks(); // return a response with tasks array
         }
     }
 
     @Get('/:id')
     getTaskById(@Param('id') id: string): Task {
-        return this.tasksService.getTaskById(id);
+        const validTask = this.tasksService.getTaskById(id);
+
+        if (!validTask) {
+            throw new NotFoundException(`task with "${id}" does not exist`);
+        }
+        return validTask;
     }
 
     @Post()
