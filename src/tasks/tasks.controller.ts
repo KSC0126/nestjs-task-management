@@ -3,13 +3,14 @@ import { TasksService } from './tasks.service';
 import { Task, TaskStatus } from './task.model';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TasksFilterDto } from './dto/get-tasks-filter.dto';
+import { TaskStatusValidator } from './pipes/task-status-validation.pipe';
 
 @Controller('tasks')
 export class TasksController {
     constructor(private tasksService: TasksService) { }
 
     @Get() // letting nest js know it is a get class or using @Get decorator to make get call
-    getTasks(@Query() filterDto: TasksFilterDto): Task[] {
+    getTasks(@Query(ValidationPipe) filterDto: TasksFilterDto): Task[] {
         if (Object.keys(filterDto).length) {
             return this.tasksService.getTasksByFilter(filterDto);
         } else {
@@ -41,7 +42,7 @@ export class TasksController {
     @Patch('/:id/status')
     updateStatus(
         @Param('id') id: string,
-        @Body('status') status: TaskStatus): Task {
+        @Body('status', TaskStatusValidator) status: TaskStatus): Task {
         return this.tasksService.updateTask(id, status);
     }
 
